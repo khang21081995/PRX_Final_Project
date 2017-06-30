@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package db;
 
 import java.io.Serializable;
@@ -17,10 +13,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author khang
  */
 public class DataAccessObject implements Serializable {
+    public static enum MODE_UPDATE {
+        LARGE_UPDATE, SMALL_UPDATE
+    }
 
     private final ResourceBundle rb = ResourceBundle.getBundle("db.db_config", Locale.getDefault());
     private Connection conn = null;
@@ -52,7 +50,7 @@ public class DataAccessObject implements Serializable {
         return conn;
     }
 
-    public boolean executeUpdateSQLwithParams(String sqlUpdate, String... params) throws SQLException {
+    public boolean executeSQLwithParams(String sqlUpdate, MODE_UPDATE MODE, String... params) throws SQLException {
         try {
             conn.setAutoCommit(false);
             PreparedStatement ps = conn.prepareStatement(sqlUpdate);
@@ -61,7 +59,9 @@ public class DataAccessObject implements Serializable {
                 ps.setString(paramsCount, param);
                 paramsCount++;
             }
-            ps.executeUpdate();
+            if (MODE == MODE_UPDATE.SMALL_UPDATE)
+                ps.executeUpdate();
+            else ps.executeLargeUpdate();
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -79,35 +79,14 @@ public class DataAccessObject implements Serializable {
         }
     }
 
-    public boolean executeInsertSQLwithParams(String sqlInsert, String... params) throws SQLException {
-        try {
-            conn.setAutoCommit(false);
-            PreparedStatement ps = conn.prepareStatement(sqlInsert);
-            int paramsCount = 0;
-            for (String param : params) {
-                ps.setString(paramsCount, param);
-                paramsCount++;
-            }
-            ps.executeUpdate();
-            conn.commit();
-            return true;
-        } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    System.err.print("Transaction is being rolled back");
-                    conn.rollback();
-                } catch (SQLException excep) {
-                    System.err.println(excep.getMessage());
-                }
-            }
-            return false;
-        } finally {
-            conn.setAutoCommit(true);
-        }
-    }
 
-    public ResultSet getResulSet(String sqlSelect) throws Exception {
+    public ResultSet getResulSet(String sqlSelect, String... params) throws Exception {
         PreparedStatement ps = conn.prepareStatement(sqlSelect);
+        int paramsCount = 0;
+        for (String param : params) {
+            ps.setString(paramsCount, param);
+            paramsCount++;
+        }
         return ps.executeQuery();
     }
 }
