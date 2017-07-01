@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package entities;
+package bo;
 
 /**
  *
- * @author khang
+ * @author phamquangkhang
  */
-public class CustomerInfo {
+public class CustomerManagement {
+    
 }

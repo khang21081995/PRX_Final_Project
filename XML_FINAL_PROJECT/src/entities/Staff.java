@@ -6,6 +6,7 @@ import util.ValidationAndNormalizingText;
  * Created by khang on 7/1/2017.
  */
 public class Staff {
+
     private String username;
     private String password;
     private String name;
@@ -14,6 +15,7 @@ public class Staff {
     private String address;
     private String department;
     private String phoneNumber;
+    private boolean isManager;
 
     public Staff() {
         this.username = "";
@@ -24,9 +26,10 @@ public class Staff {
         this.address = "";
         this.department = "";
         this.phoneNumber = "";
+        this.isManager = false;
     }
 
-    public Staff(String username, String password, String name, String dob, String email, String address, String department, String phoneNumber) {
+    public Staff(String username, String password, String name, String dob, String email, String address, String department, String phoneNumber, boolean isManager) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -35,6 +38,7 @@ public class Staff {
         this.address = address;
         this.department = department;
         this.phoneNumber = phoneNumber;
+        this.isManager = isManager;
     }
 
     public String getUsername() {
