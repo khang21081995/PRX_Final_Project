@@ -5,10 +5,27 @@
  */
 package bo;
 
+import java.sql.ResultSet;
+
 /**
  *
  * @author phamquangkhang
  */
-public class StaffManagement {
+public class StaffManagement implements ManageAction{
+
+    @Override
+    public boolean create(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean update(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ResultSet select(Object o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
