@@ -13,9 +13,9 @@ import java.sql.ResultSet;
  */
 public interface ManageAction {
 
-    public boolean create(Object o);
+    public boolean create(Object o) throws Exception;
 
-    public boolean update(Object o);
+    public boolean update(Object o) throws Exception;
 
-    public ResultSet select(Object o);
+    public ResultSet select(Object o) throws Exception;
 }

@@ -1,4 +1,3 @@
-
 package db;
 
 import java.io.Serializable;
@@ -16,6 +15,7 @@ import java.util.logging.Logger;
  * @author khang
  */
 public class DataAccessObject implements Serializable {
+
     public static enum MODE_UPDATE {
         LARGE_UPDATE, SMALL_UPDATE
     }
@@ -52,16 +52,20 @@ public class DataAccessObject implements Serializable {
 
     public boolean executeSQLwithParams(String sqlUpdate, MODE_UPDATE MODE, String... params) throws SQLException {
         try {
+
             conn.setAutoCommit(false);
             PreparedStatement ps = conn.prepareStatement(sqlUpdate);
             int paramsCount = 0;
             for (String param : params) {
-                ps.setString(paramsCount, param);
                 paramsCount++;
+                ps.setString(paramsCount, param);
             }
-            if (MODE == MODE_UPDATE.SMALL_UPDATE)
+//            System.out.println(ps.toString());
+            if (MODE == MODE_UPDATE.SMALL_UPDATE) {
                 ps.executeUpdate();
-            else ps.executeLargeUpdate();
+            } else {
+                ps.executeLargeUpdate();
+            }
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -79,13 +83,12 @@ public class DataAccessObject implements Serializable {
         }
     }
 
-
     public ResultSet getResulSet(String sqlSelect, String... params) throws Exception {
         PreparedStatement ps = conn.prepareStatement(sqlSelect);
         int paramsCount = 0;
         for (String param : params) {
-            ps.setString(paramsCount, param);
             paramsCount++;
+            ps.setString(paramsCount, param);
         }
         return ps.executeQuery();
     }

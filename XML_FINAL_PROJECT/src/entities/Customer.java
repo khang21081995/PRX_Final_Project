@@ -12,6 +12,7 @@ import util.ValidationAndNormalizingText;
  * @author khang
  */
 public class Customer {
+
     private String name;
     private String passport;
     private String dob;
@@ -51,7 +52,9 @@ public class Customer {
 
     public void setEmail(String email) throws Exception {
         if (email != "") {
-            if ((this.email = ValidationAndNormalizingText.validationEmail(email)) == "") {
+            this.email = ValidationAndNormalizingText.validationEmail(email);
+//            System.out.println("Email: " + this.email);
+            if (this.email == "") {
                 throw new Exception("Email sai định dạng!!!");
             }
         } else {
@@ -72,7 +75,7 @@ public class Customer {
     }
 
     public void setPassport(String passport) {
-        this.passport = passport;
+        this.passport = MD5Library.md5Encrypt(passport);
     }
 
     public String getDob() {
@@ -105,24 +108,17 @@ public class Customer {
     public void setScore(int score) throws Exception {
         if (score < 0) {
             throw new Exception("Điểm tích không được nhỏ hơn 0.");
-        } else
+        } else {
             this.score = score;
+        }
     }
 
-    public void increaseScore(int score) {
-        try {
-            setScore(getScore() + score);
-        } catch (Exception e) {
-
-        }
+    public void increaseScore(int score) throws Exception {
+        setScore(getScore() + score);
     }
 
     public void decreaseScore(int score) throws Exception {
-        try {
-            setScore(getScore() - score);
-        } catch (Exception e) {
-            setScore(getScore());
-        }
+        setScore(getScore() - score);
     }
 
     public String getAccountType() {
@@ -146,6 +142,6 @@ public class Customer {
     }
 
     public void setCardID(String cardID) {
-        this.cardID = MD5Library.md5Encrypt(cardID);
+        this.cardID = (cardID);
     }
 }

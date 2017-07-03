@@ -62,7 +62,7 @@ public class ValidationAndNormalizingText {
     public static String validAndNomalPhoneNumber(String phoneNum, String splitChar) throws Exception {
         phoneNum = removeAllBlank(phoneNum);
         String out = "";
-        System.out.println(phoneNum);
+//        System.out.println(phoneNum);
         if (!phoneNum.matches("[0-9]+")) {
             throw new Exception("Phone number must be contain digit only");
         }
@@ -84,14 +84,17 @@ public class ValidationAndNormalizingText {
             out += splitChar + phoneNum.subSequence(4 + i * 3, 4 + i * 3 + 3);
             count++;
         }
-        if (phoneNum.length() - count * 3 - 1 != 0)
+        if (phoneNum.length() - count * 3 - 1 != 0) {
             out += splitChar + phoneNum.subSequence(count * 3 + 1, count * 3 + 1 + (phoneNum.length() - 4) % 3);
+        }
         return out;
     }
 
     public static String validationEmail(String email) {
-        final String EMAIL_REGEX = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         email = removeAllBlank(email);
+//        System.out.println(email);
         if (email.matches(EMAIL_REGEX)) {
             return email;
         } else {
@@ -110,7 +113,7 @@ public class ValidationAndNormalizingText {
     }
 
     public static void main(String[] args) {
-        System.out.println(validationDate(" 21 /09 / 1992 ","dd/MM/yyyy"));
+        System.out.println(validationDate(" 21 /09 / 1992 ", "dd/MM/yyyy"));
     }
 
 }
