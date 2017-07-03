@@ -92,4 +92,16 @@ public class DataAccessObject implements Serializable {
         }
         return ps.executeQuery();
     }
+
+    public ResultSet getAllFromTable(String tableName) throws Exception {
+        String sql = "Select * from " + tableName;
+        return getResulSet(sql);
+    }
+
+    public static void main(String[] args) throws Exception {
+        ResultSet rs = new DataAccessObject().getAllFromTable("Staff");
+        while (rs.next()) {
+            System.out.println(rs.getString(1));
+        }
+    }
 }

@@ -36,14 +36,14 @@ public class Customer {
     }
 
     public Customer() {
-        this.name = "";
-        this.passport = "";
-        this.dob = dob;
-        this.phoneNumber = "";
-        this.score = 0;
-        this.accountType = "";
-        this.gender = "";
-        this.cardID = "";
+//        this.name = "";
+//        this.passport = "";
+//        this.dob = dob;
+//        this.phoneNumber = "";
+//        this.score = 0;
+//        this.accountType = "";
+//        this.gender = "";
+//        this.cardID = "";
     }
 
     public String getEmail() {

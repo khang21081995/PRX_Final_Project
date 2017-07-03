@@ -35,14 +35,23 @@ public class CustomerManagement implements ManageAction {
         if (c == null) {
             return false;
         }
-        return dao.executeSQLwithParams(sqlInsert, DataAccessObject.MODE_UPDATE.SMALL_UPDATE
-        ,c.getName(),c.getPassport(),c.getDob(),c.getPhoneNumber(),c.getEmail(),c.getScore()+""
-                ,c.getAccountType(),c.getGender(),c.getCardID());
+        return dao.executeSQLwithParams(sqlInsert, DataAccessObject.MODE_UPDATE.SMALL_UPDATE,
+                c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
+                c.getAccountType(), c.getGender(), c.getCardID());
     }
 
     @Override
-    public boolean update(Object o) {
-        return true;
+    public boolean update(Object o) throws SQLException {
+        String sqlUpdate = "UPDATE " + table_name
+                + "SET name = ?,passport=?,dob=?,phoneNumber=?,email=?, score=?,accountType=?,gender=?"
+                + "WHERE cardID=?";
+        Customer c = o instanceof Customer ? (Customer) o : null;
+        if (c == null) {
+            return false;
+        }
+        return dao.executeSQLwithParams(sqlUpdate, DataAccessObject.MODE_UPDATE.SMALL_UPDATE,
+                c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
+                c.getAccountType(), c.getGender(), c.getCardID());
 
     }
 
@@ -50,6 +59,7 @@ public class CustomerManagement implements ManageAction {
     public ResultSet select(Object o) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     public static void main(String[] args) {
         try {
             Customer c = new Customer();

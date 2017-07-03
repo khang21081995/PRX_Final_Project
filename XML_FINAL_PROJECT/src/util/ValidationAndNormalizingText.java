@@ -112,6 +112,15 @@ public class ValidationAndNormalizingText {
         }
     }
 
+    public static boolean validateUsername(String username, int minLength, int maxLength) throws Exception {
+        String regex = "^[a-zA-Z0-9]{" + minLength + "," + maxLength + "}$";
+        if (username.matches(regex)) {
+            return true;
+        } else {
+            throw new Exception("Tài khoản chỉ được chứa chữ cái, số và độ dài trong khoảng từ " + minLength + " đến " + maxLength);
+        }
+    }
+
     public static void main(String[] args) {
         System.out.println(validationDate(" 21 /09 / 1992 ", "dd/MM/yyyy"));
     }

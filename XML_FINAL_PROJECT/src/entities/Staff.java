@@ -1,5 +1,6 @@
 package entities;
 
+import encrypt.MD5Library;
 import util.ValidationAndNormalizingText;
 
 /**
@@ -13,40 +14,68 @@ public class Staff {
     private String dob;
     private String email;
     private String address;
-    private String department;
     private String phoneNumber;
     private boolean isManager;
+    private String gender;
+    private boolean isBlock;
 
-    public Staff() {
-        this.username = "";
-        this.password = "";
-        this.name = "";
-        this.dob = "";
-        this.email = "";
-        this.address = "";
-        this.department = "";
-        this.phoneNumber = "";
-        this.isManager = false;
+    public String getGender() {
+        return gender;
     }
 
-    public Staff(String username, String password, String name, String dob, String email, String address, String department, String phoneNumber, boolean isManager) {
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Staff() {
+//        this.username = "";
+//        this.password = "";
+//        this.name = "";
+//        this.dob = "";
+//        this.email = "";
+//        this.address = "";
+//        this.phoneNumber = "";
+//        this.isManager = false;
+//        this.gender = "";
+    }
+
+    public boolean getIsManager() {
+        return isManager;
+    }
+
+    public void setIsManager(boolean isManager) {
+        this.isManager = isManager;
+    }
+
+    public Staff(String username, String password, String name, String dob, String email, String address, String phoneNumber, boolean isManager, String gender, boolean isBlock) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.dob = dob;
         this.email = email;
         this.address = address;
-        this.department = department;
         this.phoneNumber = phoneNumber;
         this.isManager = isManager;
+        this.gender = gender;
+        this.isBlock = isBlock;
+    }
+
+    public boolean getIsBlock() {
+        return isBlock;
+    }
+
+    public void setIsBlock(boolean isBlock) {
+        this.isBlock = isBlock;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String username) throws Exception {
+        if (ValidationAndNormalizingText.validateUsername(username, 6, 30)) {
+            this.username = username;
+        }
     }
 
     public String getPassword() {
@@ -54,7 +83,7 @@ public class Staff {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = MD5Library.md5Encrypt(password);
     }
 
     public String getName() {
@@ -85,8 +114,8 @@ public class Staff {
     }
 
     public void setEmail(String email) throws Exception {
-        if (email != "") {
-            if ((this.email = ValidationAndNormalizingText.validationEmail(email)) == "") {
+        if (!email.equals("")) {
+            if ((this.email = ValidationAndNormalizingText.validationEmail(email)).equals("")) {
                 throw new Exception("Email sai định dạng!!!");
             }
         } else {
@@ -100,14 +129,6 @@ public class Staff {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
     }
 
     public String getPhoneNumber() {
