@@ -136,6 +136,6 @@ public class Staff {
     }
 
     public void setPhoneNumber(String phoneNumber) throws Exception {
-        this.phoneNumber = ValidationAndNormalizingText.validAndNomalPhoneNumber(phoneNumber, ".");
+        this.phoneNumber = ValidationAndNormalizingText.validAndNomalPhoneNumber(phoneNumber, " ");
     }
 }

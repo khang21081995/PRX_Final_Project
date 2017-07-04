@@ -75,6 +75,17 @@ public class StaffManagement implements ManageAction {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public Staff getStaffByUsername(String username) throws Exception {
+        Staff staff = null;
+        String sqlSelect = "Select [username],[password],[fullname],[dob],[email],[address],[phone_num],[isManager],[gender],[isBlock] from staff where username = ?";
+        ResultSet rs = dao.getResulSet(sqlSelect, username);
+        if (rs.next()) {
+            return new Staff(rs.getString("username"), rs.getString("password"), rs.getString("fullname"), rs.getString("dob"), rs.getString("email"), rs.getString("address"),
+                    rs.getString("phone_num"), rs.getString("isManager").equalsIgnoreCase("1") ? true : false, rs.getString("gender"), rs.getString("isBlock").equalsIgnoreCase("1") ? true : false);
+        }
+        return staff;
+    }
+
     public static void main(String[] args) {
         try {
             Staff c = new Staff();

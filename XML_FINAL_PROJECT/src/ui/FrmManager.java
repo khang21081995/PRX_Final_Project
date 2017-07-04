@@ -7,12 +7,21 @@ package ui;
 
 import bo.SystemManagement;
 import db.DataAccessObject;
+import java.awt.Dialog;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import jdk.nashorn.internal.ir.BreakNode;
+import util.Util;
 
 /**
  *
@@ -24,7 +33,11 @@ public class FrmManager extends javax.swing.JFrame {
     private DefaultTableModel dtm;
     private DataAccessObject dao;
 
-    private final String[] StaffCol = {"username", "fullname", "gender", "dob", "email", "phone_num", "address", "isBlock", "password", "isManager"};
+    private final int customerTab = 0;
+    private final int staffTab = 2;
+    private final int ticketTab = 1;
+
+    private final String[] StaffCol = {"username", "fullname", "gender", "dob", "email", "phone_num", "address", "isBlock", "isManager", "password"};
     private final String[] StaffColRef = {"Tên Tài Khoản", "Họ và Tên", "Giới tính", "Ngày Sinh", "Email", "Số điện thoại", "Địa chỉ", "Tài khoản bị khóa?"};
     private boolean staffIsLoad = false;
 
@@ -32,21 +45,14 @@ public class FrmManager extends javax.swing.JFrame {
     private final String[] CustomerColRef = {"Mã số thẻ", "Điểm tích", "Loại Tài Khoản", "Họ và Tên", "Giới tính", "CMND/Passport", "Ngày sinh", "Số điện thoại", "Email"};
     private boolean customerIsLoad = false;
 
-    private String[] currentCol = StaffCol;
-    private String[] currentColRef = StaffColRef;
-    private String currentTable = "Staff";
+    public String[] currentCol = StaffCol;
+    public String[] currentColRef = StaffColRef;
+    public String currentTable = "Staff";
 
-    private String currentUser;
-    private String currentRole;
-
-    private String buildingSQLSelectToBindTable(String[] inArr, String tableName) {
-        String ret = "select";
-        for (String string : inArr) {
-            ret += " " + string + ",";
-        }
-        ret = ret.substring(0, ret.length() - 1) + " from " + tableName;
-        return ret;
-    }
+    public String currentUser;
+    public String currentRole;
+    public int currentTab = 0;
+    private HashMap<Integer, ArrayList<String>> map = new HashMap<>();
 
     /**
      * Creates new form manager_form
@@ -58,7 +64,7 @@ public class FrmManager extends javax.swing.JFrame {
             dao = new DataAccessObject();
             sm = new SystemManagement();
         } catch (Exception e) {
-            System.out.println("clgv");
+//            System.out.println("clgv");
             JOptionPane.showMessageDialog(this, e.getMessage());
             System.exit(0);
         }
@@ -66,19 +72,38 @@ public class FrmManager extends javax.swing.JFrame {
         if (currentRole.equalsIgnoreCase("staff")) {
             tabbedPanel.remove(2);
         }
-//        jScrollPane1.setVisible(false);
-//        buildingSQLSelectToBindTable(StaffCol, "Staff");
         setLocationRelativeTo(null);
         setResizable(false);
+        btnLogedInInfo.setText(role.toUpperCase() + ": " + username);
+
         setTitle("Hệ thống quản lý rạp CGV");
     }
 
-    private void loadData() {
+    public String buildingSQLSelectToBindTable(String[] inArr, String tableName) {
+        String ret = "select";
+        for (String string : inArr) {
+            ret += " " + string + ",";
+        }
+        ret = ret.substring(0, ret.length() - 1) + " from " + tableName;
+        return ret;
+    }
+
+    public boolean loadData(String... params) {
+        dtm.setNumRows(0);
+        dtm.setColumnCount(0);
+//        tbStaff.removeAll();
         String sqlSelect = buildingSQLSelectToBindTable(currentCol, currentTable);
+        if (currentTab == staffTab) {
+            sqlSelect += " where isManager='0'";
+        }
+        if (params.length != 0) {
+            sqlSelect += params[0];
+        }
         System.out.println(sqlSelect);
         for (String string : currentColRef) {
             dtm.addColumn(string);
         }
+        ArrayList<String> listString = new ArrayList<>();
         try {
 //            dao = new DataAccessObject();
             ResultSet rs = dao.getResulSet(sqlSelect);
@@ -94,11 +119,14 @@ public class FrmManager extends javax.swing.JFrame {
                     }
                 }
                 dtm.addRow(obj);
+                listString.add((String) obj[0]);
             }
+            map.put(currentTab, listString);
+            return true;
         } catch (Exception ex) {
-//            JOptionPane.showMessageDialog(this, "Gặp lỗi trong quá trình lấy dữ liệu!!!");
-            JOptionPane.showMessageDialog(this, ex.toString());
-            return;
+            JOptionPane.showMessageDialog(this, "Gặp lỗi trong quá trình lấy dữ liệu!!!");
+//            JOptionPane.showMessageDialog(this, ex.toString());
+            return false;
 
         }
     }
@@ -112,25 +140,21 @@ public class FrmManager extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnLogout = new javax.swing.JButton();
         tabbedPanel = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbCustomer = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbStaff = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
+        btnLogout = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
-        btnBlock = new javax.swing.JButton();
+        btnSearch = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
+        btnLogedInInfo = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        btnLogout.setText("Đăng Xuất");
-        btnLogout.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLogoutActionPerformed(evt);
-            }
-        });
 
         tabbedPanel.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -157,11 +181,11 @@ public class FrmManager extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 964, Short.MAX_VALUE)
+            .addGap(0, 1035, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 435, Short.MAX_VALUE)
+            .addGap(0, 432, Short.MAX_VALUE)
         );
 
         tabbedPanel.addTab("Ticket", jPanel1);
@@ -172,6 +196,13 @@ public class FrmManager extends javax.swing.JFrame {
 
         tabbedPanel.addTab("Nhân viên", jScrollPane1);
 
+        btnLogout.setText("Đăng Xuất");
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+
         btnAdd.setText("Thêm");
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -179,37 +210,76 @@ public class FrmManager extends javax.swing.JFrame {
             }
         });
 
-        btnBlock.setText("Khóa");
+        btnSearch.setText("Tìm Kiếm");
 
         btnUpdate.setText("Sửa");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
+
+        btnLogedInInfo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnLogedInInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogedInInfoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnLogedInInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnLogedInInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(86, 86, 86)
-                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnBlock, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addComponent(tabbedPanel, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBlock, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tabbedPanel))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -221,24 +291,33 @@ public class FrmManager extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:\
+        switch (currentTab) {
+            case staffTab:
+                DialogStaffInfo staffInfo = new DialogStaffInfo(this, true, "Thêm nhân viên", DialogStaffInfo.MODE_ADD_NEW);
+                staffInfo.setVisible(true);
+                break;
+            case customerTab:
+                DialogCustomerInfo customerInfo = new DialogCustomerInfo(this, true, "Thêm Khách Hàng", DialogStaffInfo.MODE_ADD_NEW);
+                customerInfo.setVisible(true);
+                break;
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private int btnShow(int caze) {
         switch (caze) {
-            case 2:
-            case 0:
+            case customerTab:
+            case staffTab:
                 btnAdd.setVisible(true);
                 btnUpdate.setVisible(true);
-                btnBlock.setVisible(true);
-                if (caze == 0) {
-                    btnBlock.setVisible(false);
-                }
+                btnSearch.setVisible(true);
+                txtSearch.setVisible(true);
                 break;
-            case 1:
+            case ticketTab:
                 btnAdd.setVisible(false);
                 btnUpdate.setVisible(false);
-                btnBlock.setVisible(false);
+                btnSearch.setVisible(false);
+                txtSearch.setVisible(false);
                 break;
 
         }
@@ -247,32 +326,67 @@ public class FrmManager extends javax.swing.JFrame {
 
     private void tabbedPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPanelStateChanged
         // TODO add your handling code here:
-        switch (btnShow(tabbedPanel.getSelectedIndex())) {
-            case 2:
+        switch ((currentTab = btnShow(tabbedPanel.getSelectedIndex()))) {
+            case staffTab:
                 dtm = (DefaultTableModel) tbStaff.getModel();
                 currentCol = StaffCol;
                 currentColRef = StaffColRef;
                 currentTable = "Staff";
-                if (!staffIsLoad) {
-                    loadData();
-                    staffIsLoad = true;
-                }
+//                if (!staffIsLoad) {
+                loadData();
+//                    staffIsLoad = true;
+//                }
                 break;
-            case 0:
+            case customerTab:
                 dtm = (DefaultTableModel) tbCustomer.getModel();
                 currentCol = CustomerCol;
                 currentColRef = CustomerColRef;
                 currentTable = "Customer";
-                if (!customerIsLoad) {
-                    loadData();
-                    customerIsLoad = true;
-                }
+//                if (!customerIsLoad) {
+                loadData();
+//                    customerIsLoad = true;
+//                }
                 break;
-            case 1:
-
+            case ticketTab:
                 break;
         }
     }//GEN-LAST:event_tabbedPanelStateChanged
+
+    private void btnLogedInInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogedInInfoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLogedInInfoActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        if (dtm.getRowCount() > 0) {
+            int selectedIndex;
+            switch (currentTab) {
+                case staffTab:
+                    selectedIndex = tbStaff.getSelectedRow();
+                    if (selectedIndex == -1) {
+                        JOptionPane.showMessageDialog(this, "Bạn chưa chọn nhân viên cần cập nhật!!!");
+                        return;
+                    }
+                    String username = map.get(currentTab).get(selectedIndex);
+                    System.out.println(username);
+                    DialogStaffInfo staffInfo = new DialogStaffInfo(this, true, "Cập nhật thông tin nhân viên", DialogStaffInfo.MODE_UPDATE, username);
+                    staffInfo.setVisible(true);
+                    break;
+                case customerTab:
+                    selectedIndex = tbCustomer.getSelectedRow();
+                    if (selectedIndex == -1) {
+                        JOptionPane.showMessageDialog(this, "Bạn chưa chọn khách hàng cần cập nhật!!!");
+                        return;
+                    }
+                    String customerID = map.get(currentTab).get(selectedIndex);
+                    DialogCustomerInfo customerInfo = new DialogCustomerInfo(this, true, "Cập nhật thông tin Khách Hàng", DialogStaffInfo.MODE_UPDATE, customerID);
+                    customerInfo.setVisible(true);
+                    break;
+            }
+        } else {
+
+        }
+    }//GEN-LAST:event_btnUpdateActionPerformed
 
     /**
      * @param args the command line arguments
@@ -312,14 +426,17 @@ public class FrmManager extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnBlock;
+    private javax.swing.JButton btnLogedInInfo;
     private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane tabbedPanel;
     private javax.swing.JTable tbCustomer;
     private javax.swing.JTable tbStaff;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

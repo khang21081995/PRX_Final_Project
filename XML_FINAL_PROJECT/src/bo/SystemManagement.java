@@ -48,6 +48,6 @@ public class SystemManagement {
     }
 
     public void logout(JFrame current) {
-        util.Util.showForm(current, new FrmLogin());
+        util.Util.openNewFormAndDestroyCloseForm(current, new FrmLogin());
     }
 }

@@ -70,6 +70,7 @@ public class FrmLogin extends javax.swing.JFrame {
         jLabel3.setText("Mật khẩu:");
 
         txtAcc.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtAcc.setText("khang21081995");
         txtAcc.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtAccKeyPressed(evt);
@@ -77,6 +78,7 @@ public class FrmLogin extends javax.swing.JFrame {
         });
 
         txtPass.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtPass.setText("Nh0cdaicA");
         txtPass.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtPassKeyPressed(evt);
@@ -147,9 +149,9 @@ public class FrmLogin extends javax.swing.JFrame {
         try {
             int loginStatus;
             if ((loginStatus = sm.login(userName, pass)) == sm.LOGIN_AS_MANAGER) {
-                util.Util.showForm(this, new FrmManager(userName, "manager"));
+                util.Util.openNewFormAndDestroyCloseForm(this, new FrmManager(userName, "manager"));
             } else if (loginStatus == sm.LOGIN_AS_STAFF) {
-                util.Util.showForm(this, new FrmManager(userName, "staff"));
+                util.Util.openNewFormAndDestroyCloseForm(this, new FrmManager(userName, "staff"));
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());

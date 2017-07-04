@@ -16,6 +16,9 @@ import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.Enumeration;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 
 /**
@@ -30,14 +33,14 @@ public class Util {
         return System.getProperty("os.name").startsWith("Windows") ? windowsPath : nonWindowsPath;
     }
 
-    public static String modifyToGetCorrectOSPath(String path){
+    public static String modifyToGetCorrectOSPath(String path) {
         String windowsPath = "\\";
         String nonWindowsPath = "/";
-        return System.getProperty("os.name").startsWith("Windows") ? path.replaceAll(nonWindowsPath, windowsPath) :  path.replaceAll(windowsPath, nonWindowsPath);
+        return System.getProperty("os.name").startsWith("Windows") ? path.replaceAll(nonWindowsPath, windowsPath) : path.replaceAll(windowsPath, nonWindowsPath);
     }
-    
+
     public static void LookupChange(String folderPath, CallBack callback) {
-        
+
         File inFolder = new File(modifyToGetCorrectOSPath(folderPath));
         Path path = inFolder.toPath();
         System.out.println("Watching path: " + path);
@@ -103,10 +106,42 @@ public class Util {
             ie.printStackTrace();
         }
     }
-    
-    public static void showForm(JFrame in,JFrame out){
+
+    public static void openNewFormAndDestroyCloseForm(JFrame in, JFrame out) {
         in.setVisible(false);
         in.dispose();
         out.setVisible(true);
     }
+
+    public static void openNewFormAndInvisibleForm(JFrame in, JFrame out) {
+        in.setVisible(false);
+        out.setVisible(true);
+    }
+
+    public static String getSelectedButtonText(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+
+            if (button.isSelected()) {
+                return button.getText();
+            }
+        }
+
+        return null;
+    }
+
+    public static boolean setSelectedButtonText(ButtonGroup buttonGroup, String text) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+
+            if (button.getText().equalsIgnoreCase(text)) {
+                System.out.println(text);
+                button.setSelected(true);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
