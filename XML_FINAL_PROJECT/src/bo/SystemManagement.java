@@ -29,7 +29,7 @@ public class SystemManagement {
     public int login(String username, String password) throws Exception {
         password = MD5Library.md5Encrypt(password);
         ResultSet rs;
-        if ((rs = dao.getResulSet("Select [username], [password],[isManager],[isBlock] from [Staff] where [username] = ?", username)).next()) {
+        if ((rs = dao.getResulSet("Select [password],[isManager],[isBlock] from [Staff] where [username] = ?", username)).next()) {
             if (rs.getString("password").equals(password)) {
                 if (rs.getString("isBlock").equalsIgnoreCase("1")) {
                     throw new Exception("Tài khoản " + username + " đã bị khóa");
