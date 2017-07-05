@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javafx.scene.control.DatePicker;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import util.Util;
 
 /**
@@ -55,9 +56,19 @@ public class DialogStaffInfo extends javax.swing.JDialog {
                 txtEmail.setText(staff.getEmail());
                 txtPhone.setText(staff.getPhoneNumber());
 
-                Util.setSelectedButtonText(btnGroupGender, staff.getGender());
-                Util.setSelectedButtonText(btnGroupIsBlock, staff.getIsBlock() ? "Khóa" : "Mở");
-                Util.setSelectedButtonText(btnGroupRole, staff.getIsManager() ? "Quản Lý" : "Nhân Viên");
+                Util.setSelectedButtonText(staff.getGender().trim(), rdbFemale, rdbMale, rdbOthers);
+                Util.setSelectedButtonText(staff.getIsBlock() ? "Khóa" : "Mở", rdbUnBlock, rdbBlock);
+                Util.setSelectedButtonText(staff.getIsManager() ? "Quản Lý" : "Nhân Viên", rdbStaff, rdbManager);
+                try {
+                    if (params[3] != null) {
+                        rdbBlock.setEnabled(false);
+                        rdbUnBlock.setEnabled(false);
+                        rdbStaff.setEnabled(false);
+                        rdbManager.setEnabled(false);
+                    }
+                } catch (Exception e) {
+
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -74,7 +85,7 @@ public class DialogStaffInfo extends javax.swing.JDialog {
         txtAcc.setText("");
         txtPass.setText("");
         txtAddress.setText("");
-        txtDOB.setText("dd/MM/yyyy");
+//        txtDOB.setText("dd/MM/yyyy");
         txtEmail.setText("");
         txtFullName.setText("");
         txtPhone.setText("");
@@ -101,8 +112,24 @@ public class DialogStaffInfo extends javax.swing.JDialog {
 
     }
 
-    private void addNewStaff() {
-        staff = new Staff();
+    private boolean addNewStaff() {
+        try {
+            staff = new Staff();
+            staff.setUsername(txtAcc.getText());
+            staff.setPassword(txtPass.getText());
+            staff.setAddress(txtAddress.getText());
+            staff.setDob(txtDOB.getText());
+            staff.setEmail(txtEmail.getText());
+            staff.setGender(Util.getSelectedButtonText(btnGroupGender));
+            staff.setIsBlock(Util.getSelectedButtonText(btnGroupIsBlock).equals("Khóa") ? true : false);
+            staff.setIsManager(Util.getSelectedButtonText(btnGroupRole).equals("Quản Lý") ? true : false);
+            staff.setName(txtFullName.getText());
+            staff.setPhoneNumber(txtPhone.getText());
+            return sm.create(staff);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            return false;
+        }
 
     }
 
@@ -364,14 +391,21 @@ public class DialogStaffInfo extends javax.swing.JDialog {
             if (update_staff()) {
                 ((FrmManager) parent).loadData();
                 btnCancelActionPerformed(null);
-            }else{
-                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!!!");
+            } else {
+//                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
             }
         }
         if (mode == MODE_ADD_NEW) {
-            addNewStaff();
+            if (addNewStaff()) {
+                ((FrmManager) parent).loadData();
+                btnCancelActionPerformed(null);
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!!!");
+            } else {
+//                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+            }
         }
-        
+
 
     }//GEN-LAST:event_btnActionActionPerformed
 
@@ -405,6 +439,9 @@ public class DialogStaffInfo extends javax.swing.JDialog {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(DialogStaffInfo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */

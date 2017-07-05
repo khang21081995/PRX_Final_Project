@@ -50,7 +50,7 @@ public class DataAccessObject implements Serializable {
         return conn;
     }
 
-    public boolean executeSQLwithParams(String sqlUpdate, MODE_UPDATE MODE, String... params) throws SQLException {
+    public boolean executeSQLwithParams(String sqlUpdate, MODE_UPDATE MODE, String... params) throws SQLException, Exception {
         try {
 
             conn.setAutoCommit(false);
@@ -77,7 +77,7 @@ public class DataAccessObject implements Serializable {
                     System.err.println(excep.getMessage());
                 }
             }
-            return false;
+            throw new Exception(e.getMessage() + "\nCập nhật thất bại, Database sẽ được đưa vệ trạng thái trước khi cập nhật");
         } finally {
             conn.setAutoCommit(true);
         }

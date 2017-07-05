@@ -25,7 +25,7 @@ public class StaffManagement implements ManageAction {
     }
 
     @Override
-    public boolean create(Object o) throws SQLException {
+    public boolean create(Object o) throws SQLException, Exception {
         String sqlInsert = "INSERT INTO " + table_name
                 + " ( [username],[password],[fullname],[dob],[email],[address],[phone_num],[isManager],[gender],[isBlock]) "
                 + "VALUES (?,?,?,?,?,?,?,?,?,?) ";
@@ -48,7 +48,7 @@ public class StaffManagement implements ManageAction {
     }
 
     @Override
-    public boolean update(Object o) throws SQLException {
+    public boolean update(Object o) throws SQLException, Exception {
         String sqlUpdate = "UPDATE " + table_name
                 + " Set  [password] = ?,[fullname]= ?,[dob]=?,[email]=?,[address]=?,[phone_num]=?,[isManager]=?,[gender]=?,[isBlock]=? "
                 + " where  [username] = ? ";

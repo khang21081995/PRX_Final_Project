@@ -211,6 +211,11 @@ public class FrmManager extends javax.swing.JFrame {
         });
 
         btnSearch.setText("Tìm Kiếm");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setText("Sửa");
         btnUpdate.addActionListener(new java.awt.event.ActionListener() {
@@ -354,6 +359,8 @@ public class FrmManager extends javax.swing.JFrame {
 
     private void btnLogedInInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogedInInfoActionPerformed
         // TODO add your handling code here:
+        DialogStaffInfo staffInfo = new DialogStaffInfo(this, true, "Cập nhật thông tin cá nhân", DialogStaffInfo.MODE_UPDATE, currentUser, currentRole);
+        staffInfo.setVisible(true);
     }//GEN-LAST:event_btnLogedInInfoActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
@@ -387,6 +394,21 @@ public class FrmManager extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        // TODO add your handling code here:
+        String searchText = txtSearch.getText();
+        String condition = "";
+        switch (currentTab) {
+            case staffTab:
+                condition += " and ( username LIKE '%" + searchText + "%' or fullname like '%" + searchText + "%')";
+                break;
+            case customerTab:
+                condition += " where ( name LIKE '%" + searchText + "%' or cardID like '%" + searchText + "%')";
+                break;
+        }
+        loadData(condition);
+    }//GEN-LAST:event_btnSearchActionPerformed
 
     /**
      * @param args the command line arguments

@@ -26,7 +26,7 @@ public class CustomerManagement implements ManageAction {
     }
 
     @Override
-    public boolean create(Object o) throws SQLException {
+    public boolean create(Object o) throws SQLException, Exception {
         String sqlInsert = "INSERT INTO " + table_name
                 + " (name,passport,dob,phoneNumber,email, score,accountType,gender,cardID) "
                 + "VALUES (?,?,?,?,?,?,?,?,?) ";
@@ -41,7 +41,7 @@ public class CustomerManagement implements ManageAction {
     }
 
     @Override
-    public boolean update(Object o) throws SQLException {
+    public boolean update(Object o) throws SQLException, Exception {
         String sqlUpdate = "UPDATE " + table_name
                 + "SET name = ?,passport=?,dob=?,phoneNumber=?,email=?, score=?,accountType=?,gender=?"
                 + "WHERE cardID=?";

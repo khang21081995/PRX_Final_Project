@@ -19,7 +19,9 @@ import java.nio.file.WatchService;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JFrame;
+import javax.swing.JRadioButton;
 
 /**
  *
@@ -130,13 +132,11 @@ public class Util {
         return null;
     }
 
-    public static boolean setSelectedButtonText(ButtonGroup buttonGroup, String text) {
-        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
-            AbstractButton button = buttons.nextElement();
-
-            if (button.getText().equalsIgnoreCase(text)) {
-                System.out.println(text);
-                button.setSelected(true);
+    public static boolean setSelectedButtonText(String text, JRadioButton... params) {
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].getText().equalsIgnoreCase(text)) {
+                System.err.println("Vao day");
+                params[i].setSelected(true);
                 return true;
             }
         }

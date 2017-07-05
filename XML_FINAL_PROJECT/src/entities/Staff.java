@@ -82,7 +82,10 @@ public class Staff {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws Exception {
+        if (password.equalsIgnoreCase("")) {
+            throw new Exception("Mật khẩu không được để trống!!");
+        }
         this.password = MD5Library.md5Encrypt(password);
     }
 
@@ -101,10 +104,9 @@ public class Staff {
     public void setDob(String dob) throws Exception {
         String format = "dd/MM/yyyy";
         String temp;
-        if ((temp = ValidationAndNormalizingText.validationDate(dob, format)) != format) {
+        if (!(temp = ValidationAndNormalizingText.validationDate(dob, format)).equalsIgnoreCase(format)) {
             this.dob = temp;
         } else {
-            this.dob = temp;
             throw new Exception("Ngày sinh phải ở định dạng " + temp);
         }
     }

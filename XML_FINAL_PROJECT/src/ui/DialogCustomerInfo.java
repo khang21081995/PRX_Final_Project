@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import javafx.scene.control.DatePicker;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import util.Util;
 
 /**
  *
@@ -26,8 +28,8 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     private JFrame parent;
     private String[] params;
 
-    public final String MODE_UPDATE = "1";
-    public final String MODE_ADD_NEW = "0";
+    public static final String MODE_UPDATE = "1";
+    public static final String MODE_ADD_NEW = "0";
     private String mode;
     private Staff staff;
 
@@ -44,10 +46,29 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
             this.mode = params[1];
             clearText();
             if (this.mode.equals(MODE_UPDATE)) {
-                update_staff(params[2]);
-            }
-            if (this.mode.equals(MODE_ADD_NEW)) {
-                addNewStaff();
+                staff = sm.getStaffByUsername(params[2]);
+                txtAcc.setText(staff.getUsername());
+                txtAcc.disable();
+                txtPass.setText(staff.getPassword());
+                txtFullName.setText(staff.getName());
+                txtDOB.setText(staff.getDob());
+                txtAddress.setText(staff.getAddress());
+                txtEmail.setText(staff.getEmail());
+                txtPhone.setText(staff.getPhoneNumber());
+
+                Util.setSelectedButtonText(staff.getGender().trim(), rdbFemale, rdbMale, rdbOthers);
+                Util.setSelectedButtonText(staff.getIsBlock() ? "Khóa" : "Mở", rdbUnBlock, rdbBlock);
+                Util.setSelectedButtonText(staff.getIsManager() ? "Quản Lý" : "Nhân Viên", rdbStaff, rdbManager);
+                try {
+                    if (params[3] != null) {
+                        rdbBlock.setEnabled(false);
+                        rdbUnBlock.setEnabled(false);
+                        rdbStaff.setEnabled(false);
+                        rdbManager.setEnabled(false);
+                    }
+                } catch (Exception e) {
+
+                }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -58,30 +79,57 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     }
 
     private void clearText() {
-
         rdbUnBlock.setSelected(true);
         rdbOthers.setSelected(true);
         rdbStaff.setSelected(true);
         txtAcc.setText("");
         txtPass.setText("");
         txtAddress.setText("");
-        txtDOB.setText("dd/MM/yyyy");
+//        txtDOB.setText("dd/MM/yyyy");
         txtEmail.setText("");
         txtFullName.setText("");
         txtPhone.setText("");
     }
 
-    private void update_staff(String username) {
+    private boolean update_staff() {
         try {
-            staff = sm.getStaffByUsername(username);
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            if (!staff.getPassword().equals(txtPass.getText())) {
+                staff.setPassword(txtPass.getText());
+            }
+            staff.setAddress(txtAddress.getText());
+            staff.setDob(txtDOB.getText());
+            staff.setEmail(txtEmail.getText());
+            staff.setGender(Util.getSelectedButtonText(btnGroupGender));
+            staff.setIsBlock(Util.getSelectedButtonText(btnGroupIsBlock).equals("Khóa") ? true : false);
+            staff.setIsManager(Util.getSelectedButtonText(btnGroupRole).equals("Quản Lý") ? true : false);
+            staff.setName(txtFullName.getText());
+            staff.setPhoneNumber(txtPhone.getText());
+            return sm.update(staff);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            return false;
         }
+
     }
 
-    private void addNewStaff() {
-        staff = new Staff();
+    private boolean addNewStaff() {
+        try {
+            staff = new Staff();
+            staff.setUsername(txtAcc.getText());
+            staff.setPassword(txtPass.getText());
+            staff.setAddress(txtAddress.getText());
+            staff.setDob(txtDOB.getText());
+            staff.setEmail(txtEmail.getText());
+            staff.setGender(Util.getSelectedButtonText(btnGroupGender));
+            staff.setIsBlock(Util.getSelectedButtonText(btnGroupIsBlock).equals("Khóa") ? true : false);
+            staff.setIsManager(Util.getSelectedButtonText(btnGroupRole).equals("Quản Lý") ? true : false);
+            staff.setName(txtFullName.getText());
+            staff.setPhoneNumber(txtPhone.getText());
+            return sm.create(staff);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            return false;
+        }
 
     }
 
@@ -150,6 +198,11 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
         txtDOB.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtDOBFocusGained(evt);
+            }
+        });
+        txtDOB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                txtDOBMouseEntered(evt);
             }
         });
 
@@ -254,9 +307,7 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(rdbStaff)
                                         .addGap(0, 86, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(rdbUnBlock)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))))
+                                    .addComponent(rdbUnBlock))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -318,6 +369,7 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
 
     private void txtDOBFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDOBFocusGained
         // TODO add your handling code here:
+//        txtDOB.setText("");
 //        DatePicker picker = new DatePicker(LocalDate.now());
 //        picker.setVisible(true);
 //        picker.ad
@@ -335,11 +387,32 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
 
     private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
         // TODO add your handling code here:
-
-        if (((FrmManager) parent).loadData()) {
-            btnCancelActionPerformed(null);
+        if (mode == MODE_UPDATE) {
+            if (update_staff()) {
+                ((FrmManager) parent).loadData();
+                btnCancelActionPerformed(null);
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!!!");
+            } else {
+//                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+            }
         }
+        if (mode == MODE_ADD_NEW) {
+            if (addNewStaff()) {
+                ((FrmManager) parent).loadData();
+                btnCancelActionPerformed(null);
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!!!");
+            } else {
+//                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+            }
+        }
+
+
     }//GEN-LAST:event_btnActionActionPerformed
+
+    private void txtDOBMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDOBMouseEntered
+        // TODO add your handling code here:
+//        txtDOB.setText("");
+    }//GEN-LAST:event_txtDOBMouseEntered
 
     /**
      * @param args the command line arguments
