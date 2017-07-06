@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/ui/Main.java</file>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/bo/ManageAction.java</file>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/db/db_config.properties</file>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/bo/CustomerManagement.java</file>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/db/DataAccessObject.java</file>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/bo/StaffManagement.java</file>
-            <file>file:/Users/phamquangkhang/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/entities/Staff.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/xmlHandle/XMLHandler.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/Config/CallBack.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/bo/AppServices.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/bo/CustomerManagement.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/ui/FrmManager.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/config.xml</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/ui/Main.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/util/Util.java</file>
+            <file>file://Mac/Home/Desktop/PRX_Final_Project/XML_FINAL_PROJECT/src/bo/CallBackImplement.java</file>
         </group>
     </open-files>
 </project-private>
