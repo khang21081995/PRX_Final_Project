@@ -5,15 +5,14 @@
  */
 package ui;
 
+import bo.CustomerManagement;
 import bo.StaffManagement;
+import entities.Customer;
 import entities.Staff;
-import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.control.DatePicker;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
+import static ui.DialogStaffInfo.MODE_ADD_NEW;
+import static ui.DialogStaffInfo.MODE_UPDATE;
 import util.Util;
 
 /**
@@ -23,7 +22,7 @@ import util.Util;
 public class DialogCustomerInfo extends javax.swing.JDialog {
 
     /**
-     * Creates new form DialogStaffInfo
+     * Creates new form DialogCustomerInfo
      */
     private JFrame parent;
     private String[] params;
@@ -31,9 +30,9 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     public static final String MODE_UPDATE = "1";
     public static final String MODE_ADD_NEW = "0";
     private String mode;
-    private Staff staff;
+    private Customer customer;
 
-    private StaffManagement sm;
+    private CustomerManagement cm;
 
     public DialogCustomerInfo(JFrame parent, boolean modal, String... params) {
         super(parent, modal);
@@ -41,96 +40,84 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
         setLocationRelativeTo(parent);
         setResizable(false);
         try {
-            sm = new StaffManagement();
+            cm = new CustomerManagement();
             setTitle(params[0]);
             this.mode = params[1];
             clearText();
             if (this.mode.equals(MODE_UPDATE)) {
-                staff = sm.getStaffByUsername(params[2]);
-                txtAcc.setText(staff.getUsername());
-                txtAcc.disable();
-                txtPass.setText(staff.getPassword());
-                txtFullName.setText(staff.getName());
-                txtDOB.setText(staff.getDob());
-                txtAddress.setText(staff.getAddress());
-                txtEmail.setText(staff.getEmail());
-                txtPhone.setText(staff.getPhoneNumber());
+                customer = cm.getCustomerByCardID(params[2]);
+                txtCardID.setText(customer.getCardID());
+                txtCardID.setEnabled(false);
+                lblScore.setText(customer.getScore() + "");
+                txtFullName.setText(customer.getName());
+                txtDOB.setText(customer.getDob());
+                txtPassport.setText(customer.getPassport());
+                txtEmail.setText(customer.getEmail());
+                txtPhoneNum.setText(customer.getPhoneNumber());
 
-                Util.setSelectedButtonText(staff.getGender().trim(), rdbFemale, rdbMale, rdbOthers);
-                Util.setSelectedButtonText(staff.getIsBlock() ? "Khóa" : "Mở", rdbUnBlock, rdbBlock);
-                Util.setSelectedButtonText(staff.getIsManager() ? "Quản Lý" : "Nhân Viên", rdbStaff, rdbManager);
-                try {
-                    if (params[3] != null) {
-                        rdbBlock.setEnabled(false);
-                        rdbUnBlock.setEnabled(false);
-                        rdbStaff.setEnabled(false);
-                        rdbManager.setEnabled(false);
-                    }
-                } catch (Exception e) {
+                Util.setSelectedButtonText(customer.getGender().trim(), rdbFemale, rdbMale, rdbOthers);
+                Util.setSelectedButtonText(customer.getAccountType().trim(), rdbNormal, rdbVip, rdbPremium);
 
-                }
             }
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return;
         }
+
         this.parent = parent;
         this.params = params;
     }
 
-    private void clearText() {
-        rdbUnBlock.setSelected(true);
-        rdbOthers.setSelected(true);
-        rdbStaff.setSelected(true);
-        txtAcc.setText("");
-        txtPass.setText("");
-        txtAddress.setText("");
-//        txtDOB.setText("dd/MM/yyyy");
-        txtEmail.setText("");
-        txtFullName.setText("");
-        txtPhone.setText("");
+    private boolean update_customer() {
+        try {
+            customer.setScore(Integer.parseInt(lblScore.getText()));
+            customer.setName(txtFullName.getText());
+            customer.setGender(Util.getSelectedButtonText(btnGroupGender));
+            customer.setPassport(txtPassport.getText());
+            customer.setDob(txtDOB.getText());
+            customer.setPhoneNumber(txtPhoneNum.getText());
+            customer.setEmail(txtEmail.getText());
+            customer.setAccountType(Util.getSelectedButtonText(btnGroupAccType));
+            return cm.update(customer);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+            return false;
+        }
     }
 
-    private boolean update_staff() {
+    private boolean addNewCustomer() {
         try {
-            if (!staff.getPassword().equals(txtPass.getText())) {
-                staff.setPassword(txtPass.getText());
+            customer = new Customer();
+            if (txtCardID.getText().equalsIgnoreCase("")) {
+                throw new Exception("Mã Khách Hàng không được để trống!!!");
             }
-            staff.setAddress(txtAddress.getText());
-            staff.setDob(txtDOB.getText());
-            staff.setEmail(txtEmail.getText());
-            staff.setGender(Util.getSelectedButtonText(btnGroupGender));
-            staff.setIsBlock(Util.getSelectedButtonText(btnGroupIsBlock).equals("Khóa") ? true : false);
-            staff.setIsManager(Util.getSelectedButtonText(btnGroupRole).equals("Quản Lý") ? true : false);
-            staff.setName(txtFullName.getText());
-            staff.setPhoneNumber(txtPhone.getText());
-            return sm.update(staff);
+            customer.setCardID(txtCardID.getText());
+            customer.setScore(Integer.parseInt(lblScore.getText()));
+            customer.setName(txtFullName.getText());
+            customer.setGender(Util.getSelectedButtonText(btnGroupGender));
+            customer.setPassport(txtPassport.getText());
+            customer.setDob(txtDOB.getText());
+            customer.setPhoneNumber(txtPhoneNum.getText());
+            customer.setEmail(txtEmail.getText());
+            customer.setAccountType(Util.getSelectedButtonText(btnGroupAccType));
+            return cm.create(customer);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return false;
         }
-
     }
 
-    private boolean addNewStaff() {
-        try {
-            staff = new Staff();
-            staff.setUsername(txtAcc.getText());
-            staff.setPassword(txtPass.getText());
-            staff.setAddress(txtAddress.getText());
-            staff.setDob(txtDOB.getText());
-            staff.setEmail(txtEmail.getText());
-            staff.setGender(Util.getSelectedButtonText(btnGroupGender));
-            staff.setIsBlock(Util.getSelectedButtonText(btnGroupIsBlock).equals("Khóa") ? true : false);
-            staff.setIsManager(Util.getSelectedButtonText(btnGroupRole).equals("Quản Lý") ? true : false);
-            staff.setName(txtFullName.getText());
-            staff.setPhoneNumber(txtPhone.getText());
-            return sm.create(staff);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-            return false;
-        }
-
+    private void clearText() {
+        rdbNormal.setSelected(true);
+        rdbOthers.setSelected(true);
+        txtCardID.setText("");
+        txtDOB.setText("");
+        txtEmail.setText("");
+//        txtDOB.setText("dd/MM/yyyy");
+        txtFullName.setText("");
+        txtPassport.setText("");
+        txtPhoneNum.setText("");
     }
 
     /**
@@ -143,47 +130,43 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     private void initComponents() {
 
         btnGroupGender = new javax.swing.ButtonGroup();
-        btnGroupIsBlock = new javax.swing.ButtonGroup();
-        btnGroupRole = new javax.swing.ButtonGroup();
+        btnGroupAccType = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
-        txtAcc = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtPass = new javax.swing.JPasswordField();
         jLabel3 = new javax.swing.JLabel();
+        txtCardID = new javax.swing.JTextField();
         txtFullName = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
         rdbMale = new javax.swing.JRadioButton();
         rdbFemale = new javax.swing.JRadioButton();
         rdbOthers = new javax.swing.JRadioButton();
-        jLabel5 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtPassport = new javax.swing.JTextField();
         txtDOB = new javax.swing.JFormattedTextField();
+        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        txtEmail = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        txtPhone = new javax.swing.JTextField();
+        lblScore = new javax.swing.JLabel();
+        txtPhoneNum = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtAddress = new javax.swing.JTextField();
-        rdbBlock = new javax.swing.JRadioButton();
-        rdbUnBlock = new javax.swing.JRadioButton();
+        txtEmail = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        rdbManager = new javax.swing.JRadioButton();
-        jLabel10 = new javax.swing.JLabel();
-        rdbStaff = new javax.swing.JRadioButton();
+        rdbNormal = new javax.swing.JRadioButton();
+        rdbVip = new javax.swing.JRadioButton();
+        rdbPremium = new javax.swing.JRadioButton();
         btnAction = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setText("Tài Khoản:");
+        jLabel1.setText("Mã thành viên: ");
 
-        jLabel2.setText("Mật Khẩu:");
+        jLabel2.setText("Họ và Tên: ");
 
-        jLabel3.setText("Họ và Tên:");
-
-        jLabel4.setText("Giới Tính: ");
+        jLabel3.setText("Giới Tính:");
 
         btnGroupGender.add(rdbMale);
         rdbMale.setText("Nam");
+        rdbMale.setToolTipText("");
 
         btnGroupGender.add(rdbFemale);
         rdbFemale.setText("Nữ");
@@ -192,48 +175,37 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
         rdbOthers.setSelected(true);
         rdbOthers.setText("Khác");
 
-        jLabel5.setText("Ngày Sinh: ");
+        jLabel4.setText("CMND/Hộ chiếu:");
 
         txtDOB.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
-        txtDOB.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtDOBFocusGained(evt);
-            }
-        });
-        txtDOB.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                txtDOBMouseEntered(evt);
-            }
-        });
 
-        jLabel6.setText("Email:");
+        jLabel5.setText("Ngày Sinh:");
 
-        jLabel7.setText("Điện Thoại: ");
+        jLabel6.setText("Số Điện Thoại:");
 
-        jLabel8.setText("Địa Chỉ: ");
+        jLabel7.setText("Điểm: ");
 
-        btnGroupIsBlock.add(rdbBlock);
-        rdbBlock.setText("Khóa");
+        lblScore.setText("0");
 
-        btnGroupIsBlock.add(rdbUnBlock);
-        rdbUnBlock.setSelected(true);
-        rdbUnBlock.setText("Mở");
+        jLabel8.setText("Email: ");
 
-        jLabel9.setText("Khóa TK: ");
-
-        btnGroupRole.add(rdbManager);
-        rdbManager.setText("Quản Lý");
-
-        jLabel10.setText("Chức vị:");
-
-        btnGroupRole.add(rdbStaff);
-        rdbStaff.setSelected(true);
-        rdbStaff.setText("Nhân Viên");
-        rdbStaff.addActionListener(new java.awt.event.ActionListener() {
+        txtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rdbStaffActionPerformed(evt);
+                txtEmailActionPerformed(evt);
             }
         });
+
+        jLabel9.setText("Hạng Khách Hàng: ");
+
+        btnGroupAccType.add(rdbNormal);
+        rdbNormal.setSelected(true);
+        rdbNormal.setText("Normal");
+
+        btnGroupAccType.add(rdbVip);
+        rdbVip.setText("Vip");
+
+        btnGroupAccType.add(rdbPremium);
+        rdbPremium.setText("Premium");
 
         btnAction.setText("Thực Hiện");
         btnAction.addActionListener(new java.awt.event.ActionListener() {
@@ -258,56 +230,60 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel4))
-                        .addGap(18, 18, 18)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtFullName, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(txtCardID, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel7)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lblScore, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 12, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(62, 62, 62)
                                 .addComponent(rdbMale)
-                                .addGap(18, 18, 18)
-                                .addComponent(rdbFemale)
-                                .addGap(18, 18, 18)
-                                .addComponent(rdbOthers)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtAcc)
-                            .addComponent(txtFullName)
-                            .addComponent(txtPass)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDOB)
-                            .addComponent(txtEmail)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel10))
-                        .addGap(15, 15, 15)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnAction)
-                                .addGap(52, 52, 52)
-                                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtAddress)
-                            .addComponent(txtPhone)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(45, 45, 45)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(rdbBlock)
-                                    .addComponent(rdbManager))
                                 .addGap(40, 40, 40)
+                                .addComponent(rdbFemale)
+                                .addGap(28, 28, 28)
+                                .addComponent(rdbOthers)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel8))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(txtPhoneNum, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtDOB, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtPassport, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btnAction)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addGap(38, 38, 38)
+                                        .addComponent(rdbPremium)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(rdbStaff)
-                                        .addGap(0, 86, Short.MAX_VALUE))
-                                    .addComponent(rdbUnBlock))))))
+                                        .addGap(29, 29, 29)
+                                        .addComponent(rdbVip)
+                                        .addGap(32, 32, 32)
+                                        .addComponent(rdbNormal))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(52, 52, 52)
+                                        .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -316,68 +292,54 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCardID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(lblScore))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
                     .addComponent(txtFullName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(jLabel3)
                     .addComponent(rdbMale)
                     .addComponent(rdbFemale)
                     .addComponent(rdbOthers))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtDOB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel4)
+                    .addComponent(txtPassport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDOB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPhoneNum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rdbBlock)
-                    .addComponent(rdbUnBlock)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(rdbManager)
-                    .addComponent(rdbStaff))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel9)
+                    .addComponent(rdbPremium)
+                    .addComponent(rdbVip)
+                    .addComponent(rdbNormal))
+                .addGap(54, 54, 54)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAction)
                     .addComponent(btnCancel))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtDOBFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDOBFocusGained
+    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
         // TODO add your handling code here:
-//        txtDOB.setText("");
-//        DatePicker picker = new DatePicker(LocalDate.now());
-//        picker.setVisible(true);
-//        picker.ad
-    }//GEN-LAST:event_txtDOBFocusGained
-
-    private void rdbStaffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbStaffActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rdbStaffActionPerformed
+    }//GEN-LAST:event_txtEmailActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         // TODO add your handling code here:
@@ -388,7 +350,7 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     private void btnActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActionActionPerformed
         // TODO add your handling code here:
         if (mode == MODE_UPDATE) {
-            if (update_staff()) {
+            if (update_customer()) {
                 ((FrmManager) parent).loadData();
                 btnCancelActionPerformed(null);
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công!!!");
@@ -397,7 +359,7 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
             }
         }
         if (mode == MODE_ADD_NEW) {
-            if (addNewStaff()) {
+            if (addNewCustomer()) {
                 ((FrmManager) parent).loadData();
                 btnCancelActionPerformed(null);
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công!!!");
@@ -405,14 +367,7 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
 //                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
             }
         }
-
-
     }//GEN-LAST:event_btnActionActionPerformed
-
-    private void txtDOBMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtDOBMouseEntered
-        // TODO add your handling code here:
-//        txtDOB.setText("");
-    }//GEN-LAST:event_txtDOBMouseEntered
 
     /**
      * @param args the command line arguments
@@ -460,11 +415,9 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAction;
     private javax.swing.JButton btnCancel;
+    private javax.swing.ButtonGroup btnGroupAccType;
     private javax.swing.ButtonGroup btnGroupGender;
-    private javax.swing.ButtonGroup btnGroupIsBlock;
-    private javax.swing.ButtonGroup btnGroupRole;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -473,20 +426,19 @@ public class DialogCustomerInfo extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JRadioButton rdbBlock;
+    private javax.swing.JLabel lblScore;
     private javax.swing.JRadioButton rdbFemale;
     private javax.swing.JRadioButton rdbMale;
-    private javax.swing.JRadioButton rdbManager;
+    private javax.swing.JRadioButton rdbNormal;
     private javax.swing.JRadioButton rdbOthers;
-    private javax.swing.JRadioButton rdbStaff;
-    private javax.swing.JRadioButton rdbUnBlock;
-    private javax.swing.JTextField txtAcc;
-    private javax.swing.JTextField txtAddress;
+    private javax.swing.JRadioButton rdbPremium;
+    private javax.swing.JRadioButton rdbVip;
+    private javax.swing.JTextField txtCardID;
     private javax.swing.JFormattedTextField txtDOB;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtFullName;
-    private javax.swing.JPasswordField txtPass;
-    private javax.swing.JTextField txtPhone;
+    private javax.swing.JTextField txtPassport;
+    private javax.swing.JTextField txtPhoneNum;
     // End of variables declaration//GEN-END:variables
 
 }
