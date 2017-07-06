@@ -5,6 +5,7 @@
  */
 package ui;
 
+import bo.AppServices;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -15,7 +16,6 @@ import java.util.ResourceBundle;
 public class Main {
 
     public static void main(String[] args) {
-        ResourceBundle rb = ResourceBundle.getBundle("db.db_config", Locale.getDefault());
-        System.out.println(rb.getString("DB_USERNAME"));
+        AppServices.wathching();
     }
 }

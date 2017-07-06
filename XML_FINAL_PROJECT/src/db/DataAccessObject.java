@@ -98,10 +98,10 @@ public class DataAccessObject implements Serializable {
         return getResulSet(sql);
     }
 
-    public static void main(String[] args) throws Exception {
-        ResultSet rs = new DataAccessObject().getAllFromTable("Staff");
-        while (rs.next()) {
-            System.out.println(rs.getString(1));
-        }
-    }
+//    public static void main(String[] args) throws Exception {
+//        ResultSet rs = new DataAccessObject().getAllFromTable("Staff");
+//        while (rs.next()) {
+//            System.out.println(rs.getString(1));
+//        }
+//    }
 }

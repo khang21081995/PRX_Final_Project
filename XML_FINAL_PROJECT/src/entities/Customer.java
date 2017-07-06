@@ -51,10 +51,8 @@ public class Customer {
     }
 
     public void setEmail(String email) throws Exception {
-        if (email != "") {
-            this.email = ValidationAndNormalizingText.validationEmail(email);
-//            System.out.println("Email: " + this.email);
-            if (this.email == "") {
+        if (!email.equals("")) {
+            if ((this.email = ValidationAndNormalizingText.validationEmail(email)).equals("")) {
                 throw new Exception("Email sai định dạng!!!");
             }
         } else {
@@ -75,7 +73,7 @@ public class Customer {
     }
 
     public void setPassport(String passport) {
-        this.passport = MD5Library.md5Encrypt(passport);
+        this.passport = passport;
     }
 
     public String getDob() {
@@ -98,7 +96,11 @@ public class Customer {
     }
 
     public void setPhoneNumber(String phoneNumber) throws Exception {
-        this.phoneNumber = ValidationAndNormalizingText.validAndNomalPhoneNumber(phoneNumber, ".");
+        if (phoneNumber.trim().equalsIgnoreCase("")) {
+            this.phoneNumber = "";
+        } else {
+            this.phoneNumber = ValidationAndNormalizingText.validAndNomalPhoneNumber(phoneNumber, " ");
+        }
     }
 
     public int getScore() {

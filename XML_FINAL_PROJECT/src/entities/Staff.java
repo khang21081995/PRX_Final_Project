@@ -73,7 +73,7 @@ public class Staff {
     }
 
     public void setUsername(String username) throws Exception {
-        if (ValidationAndNormalizingText.validateUsername(username, 6, 30)) {
+        if (ValidationAndNormalizingText.validateUsername(username, 5, 30)) {
             this.username = username;
         }
     }
@@ -138,6 +138,11 @@ public class Staff {
     }
 
     public void setPhoneNumber(String phoneNumber) throws Exception {
-        this.phoneNumber = ValidationAndNormalizingText.validAndNomalPhoneNumber(phoneNumber, " ");
+
+        if (phoneNumber.trim().equalsIgnoreCase("")) {
+            this.phoneNumber = "";
+        } else {
+            this.phoneNumber = ValidationAndNormalizingText.validAndNomalPhoneNumber(phoneNumber, " ");
+        }
     }
 }

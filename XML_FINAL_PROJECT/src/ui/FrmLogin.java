@@ -5,12 +5,15 @@
  */
 package ui;
 
+import Config.AppConfig;
+import bo.StaffManagement;
 import bo.SystemManagement;
 import entities.Staff;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.security.auth.login.AppConfigurationEntry;
 import javax.swing.JOptionPane;
 
 /**
@@ -18,7 +21,7 @@ import javax.swing.JOptionPane;
  * @author phamquangkhang
  */
 public class FrmLogin extends javax.swing.JFrame {
-    
+
     private SystemManagement sm;
 
     /**
@@ -35,7 +38,28 @@ public class FrmLogin extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Hệ thống quản lý rạp CGV");
-        
+        initAdminAccount();
+    }
+
+    private void initAdminAccount() {
+        try {
+            Staff c = new Staff();
+            c.setAddress("Hà Nội");
+            c.setDob("21/08/1995");
+            c.setEmail("KhangPQ.vn@gmail.com");
+            c.setIsManager(true);
+            c.setName("KhangPQ");
+            c.setPassword("admin");
+            c.setPhoneNumber("0981604050");
+            c.setUsername("admin");
+            c.setGender("Nam");
+            c.setIsBlock(false);
+            System.err.println(AppConfig.INPUT_PATH);
+            new StaffManagement().create(c);
+            System.out.println("OK");
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 
     /**

@@ -5,6 +5,7 @@
  */
 package ui;
 
+import bo.AppServices;
 import bo.SystemManagement;
 import db.DataAccessObject;
 import java.awt.Dialog;
@@ -42,7 +43,7 @@ public class FrmManager extends javax.swing.JFrame {
     private boolean staffIsLoad = false;
 
     private final String[] CustomerCol = {"cardID", "score", "accountType", "name", "gender", "passport", "dob", "phoneNumber", "email"};
-    private final String[] CustomerColRef = {"Mã số thẻ", "Điểm tích", "Loại Tài Khoản", "Họ và Tên", "Giới tính", "CMND/Passport", "Ngày sinh", "Số điện thoại", "Email"};
+    private final String[] CustomerColRef = {"Mã Thành Viên", "Điểm tích", "Loại Tài Khoản", "Họ và Tên", "Giới tính", "CMND/Passport", "Ngày sinh", "Số điện thoại", "Email"};
     private boolean customerIsLoad = false;
 
     public String[] currentCol = StaffCol;
@@ -77,6 +78,7 @@ public class FrmManager extends javax.swing.JFrame {
         btnLogedInInfo.setText(role.toUpperCase() + ": " + username);
 
         setTitle("Hệ thống quản lý rạp CGV");
+//        AppServices.wathching();
     }
 
     public String buildingSQLSelectToBindTable(String[] inArr, String tableName) {

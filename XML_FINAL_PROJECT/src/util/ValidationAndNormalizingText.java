@@ -64,19 +64,19 @@ public class ValidationAndNormalizingText {
         String out = "";
 //        System.out.println(phoneNum);
         if (!phoneNum.matches("[0-9]+")) {
-            throw new Exception("Phone number must be contain digit only");
+            throw new Exception("Số điện thoại chỉ bao gồm các số từ 0->9 bắt đầu bằng '0' hoặc '84' \nĐộ dài nằm trong khoảng từ 10 đến 15 ký tự");
         }
 
         if (phoneNum.length() < 10 || phoneNum.length() > 15) {
-            throw new Exception("Phone number length must be from 10 and 15 digits");
+            throw new Exception("Số điện thoại chỉ bao gồm các số từ 0->9 bắt đầu bằng '0' hoặc '84' \nĐộ dài nằm trong khoảng từ 10 đến 15 ký tự");
         }
 
         if (!(phoneNum.startsWith("0") || phoneNum.startsWith("84"))) {
-            throw new Exception("Phone number invalid, must be start with 0 or 84");
+            throw new Exception("Số điện thoại chỉ bao gồm các số từ 0->9 bắt đầu bằng '0' hoặc '84' \nĐộ dài nằm trong khoảng từ 10 đến 15 ký tự");
         }
 
         if (phoneNum.startsWith("84") && phoneNum.length() < 11) {
-            throw new Exception("Phone number invalid,length of phone number start with 84 must be from 11 digits");
+            throw new Exception("Số điện thoại bắt đầu bằng '84 phải có độ dài tối thiểu là 11...'");
         }
         out += phoneNum.subSequence(0, 4).toString();
         int count = 1;

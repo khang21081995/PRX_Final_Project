@@ -1,5 +1,6 @@
 package encrypt;
 
+import Config.AppConfig;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,12 +29,12 @@ public class RSALib {
     /**
      * String to hold the name of the private key file.
      */
-    public static final String PRIVATE_KEY_FILE = "./keys/private.key";
+    public static final String PRIVATE_KEY_FILE = AppConfig.CLIENT_PRIVATE_KEY;
 
     /**
      * String to hold name of the public key file.
      */
-    public static final String PUBLIC_KEY_FILE = "./keys/public.key";
+    public static final String PUBLIC_KEY_FILE = AppConfig.CLIENT_PUBLIC_KEY;
 
     /**
      * Generate key which contains a pair of private and public key using 1024
@@ -81,7 +82,8 @@ public class RSALib {
     }
 
     /**
-     * The method checks if the pair of public and private key has been generated.
+     * The method checks if the pair of public and private key has been
+     * generated.
      *
      * @return flag indicating if the pair of keys were generated.
      */
@@ -100,7 +102,7 @@ public class RSALib {
      * Encrypt the plain text using public key.
      *
      * @param text : original plain text
-     * @param key  :The public key
+     * @param key :The public key
      * @return Encrypted text
      * @throws java.lang.Exception
      */
@@ -122,7 +124,7 @@ public class RSALib {
      * Decrypt text using private key.
      *
      * @param text :encrypted text
-     * @param key  :The private key
+     * @param key :The private key
      * @return plain text
      * @throws java.lang.Exception
      */

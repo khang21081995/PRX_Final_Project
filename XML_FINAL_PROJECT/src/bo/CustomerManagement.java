@@ -5,10 +5,13 @@
  */
 package bo;
 
+import Config.AppConfig;
 import db.DataAccessObject;
 import entities.Customer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +23,7 @@ public class CustomerManagement implements ManageAction {
 
     private DataAccessObject dao;
     private final String table_name = "Customer";
+    private String[] element = {"name", "passport", "dob", "phoneNumber", "email", "score", "accountType", "gender", "cardID"};
 
     public CustomerManagement() throws Exception {
         this.dao = new DataAccessObject();
@@ -35,23 +39,42 @@ public class CustomerManagement implements ManageAction {
         if (c == null) {
             return false;
         }
-        return dao.executeSQLwithParams(sqlInsert, DataAccessObject.MODE_UPDATE.SMALL_UPDATE,
-                c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
-                c.getAccountType(), c.getGender(), c.getCardID());
+        String values[] = {c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
+            c.getAccountType(), c.getGender(), c.getCardID()};
+        String fileCreate = AppConfig.Output_PATH + util.Util.getOsPath() + new Date().getTime() + ".xml";
+        if (xmlHandle.XMLHandler.createXMLFile(fileCreate, "Action", element, values, "Type", "INSERT")) {
+            try {
+                return dao.executeSQLwithParams(sqlInsert, DataAccessObject.MODE_UPDATE.SMALL_UPDATE, values);
+            } catch (Exception ex) {
+                util.Util.deleteFile(fileCreate);
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean update(Object o) throws SQLException, Exception {
         String sqlUpdate = "UPDATE " + table_name
-                + "SET name = ?,passport=?,dob=?,phoneNumber=?,email=?, score=?,accountType=?,gender=?"
-                + "WHERE cardID=?";
+                + " SET name = ?,passport=?,dob=?,phoneNumber=?,email=?, score=?,accountType=?,gender=?"
+                + " WHERE cardID=?";
         Customer c = o instanceof Customer ? (Customer) o : null;
         if (c == null) {
             return false;
         }
-        return dao.executeSQLwithParams(sqlUpdate, DataAccessObject.MODE_UPDATE.SMALL_UPDATE,
-                c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
-                c.getAccountType(), c.getGender(), c.getCardID());
+        String values[] = {c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
+            c.getAccountType(), c.getGender(), c.getCardID()};
+//        return dao.executeSQLwithParams(sqlUpdate, DataAccessObject.MODE_UPDATE.SMALL_UPDATE,
+//                c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
+//                c.getAccountType(), c.getGender(), c.getCardID());
+        String fileCreate = AppConfig.Output_PATH + util.Util.getOsPath() + new Date().getTime() + ".xml";
+        if (xmlHandle.XMLHandler.createXMLFile(fileCreate, "Action", element, values, "Type", "UPDATE")) {
+            try {
+                return dao.executeSQLwithParams(sqlUpdate, DataAccessObject.MODE_UPDATE.SMALL_UPDATE, values);
+            } catch (Exception ex) {
+                util.Util.deleteFile(fileCreate);
+            }
+        }
+        return false;
 
     }
 
@@ -60,23 +83,39 @@ public class CustomerManagement implements ManageAction {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public static void main(String[] args) {
-        try {
-            Customer c = new Customer();
-            c.setAccountType("Premium");
-            c.setCardID("0000000001");
-            c.setDob("21/08/1995");
-            c.setEmail("KhangPQ.vn@gmail.com");
-            c.setGender("Nam");
-            c.setName("KhangPQ");
-            c.setPassport("001095002587");
-            c.setPhoneNumber("0981604050");
-            c.setScore(0);
-            new CustomerManagement().create(c);
-            System.out.println("OK");
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
+    public Customer getCustomerByCardID(String cardID) throws Exception {
+        Customer customer = null;
+
+        String sqlSelect = "SELECT [name],[passport],[dob],[phoneNumber],[email],[score],[accountType],[gender],[cardID]  FROM [Customer] where cardID = ?";
+        ResultSet rs = dao.getResulSet(sqlSelect, cardID);
+        if (rs.next()) {
+            return new Customer(rs.getString("name"), rs.getString("passport"), rs.getString("dob"), rs.getString("phoneNumber"), rs.getString("email"),
+                    Integer.parseInt(rs.getString("score")), rs.getString("accountType"), rs.getString("gender"), rs.getString("cardID"));
         }
+        return customer;
+    }
+//
+
+    public static void main(String[] args) {
+        String[] element = {"name", "passport", "dob", "phoneNumber", "email", "score", "accountType", "gender", "cardID"};
+        String temp = Arrays.toString(element);
+        System.err.println(temp.substring(1, temp.length() - 1));
+//        try {
+//            Customer c = new Customer();
+//            c.setAccountType("Premium");
+//            c.setCardID("0000000001");
+//            c.setDob("21/08/1995");
+//            c.setEmail("KhangPQ.vn@gmail.com");
+//            c.setGender("Nam");
+//            c.setName("KhangPQ");
+//            c.setPassport("001095002587");
+//            c.setPhoneNumber("0981604050");
+//            c.setScore(0);
+//            new CustomerManagement().create(c);
+//            System.out.println("OK");
+//        } catch (Exception ex) {
+//            System.err.println(ex.getMessage());
+//        }
     }
 
 }

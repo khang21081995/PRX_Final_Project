@@ -27,14 +27,14 @@ public class DialogStaffInfo extends javax.swing.JDialog {
      */
     private JFrame parent;
     private String[] params;
-
+    
     public static final String MODE_UPDATE = "1";
     public static final String MODE_ADD_NEW = "0";
     private String mode;
     private Staff staff;
-
+    
     private StaffManagement sm;
-
+    
     public DialogStaffInfo(JFrame parent, boolean modal, String... params) {
         super(parent, modal);
         initComponents();
@@ -48,14 +48,14 @@ public class DialogStaffInfo extends javax.swing.JDialog {
             if (this.mode.equals(MODE_UPDATE)) {
                 staff = sm.getStaffByUsername(params[2]);
                 txtAcc.setText(staff.getUsername());
-                txtAcc.disable();
+                txtAcc.setEnabled(false);
                 txtPass.setText(staff.getPassword());
                 txtFullName.setText(staff.getName());
                 txtDOB.setText(staff.getDob());
                 txtAddress.setText(staff.getAddress());
                 txtEmail.setText(staff.getEmail());
                 txtPhone.setText(staff.getPhoneNumber());
-
+                
                 Util.setSelectedButtonText(staff.getGender().trim(), rdbFemale, rdbMale, rdbOthers);
                 Util.setSelectedButtonText(staff.getIsBlock() ? "Khóa" : "Mở", rdbUnBlock, rdbBlock);
                 Util.setSelectedButtonText(staff.getIsManager() ? "Quản Lý" : "Nhân Viên", rdbStaff, rdbManager);
@@ -67,7 +67,7 @@ public class DialogStaffInfo extends javax.swing.JDialog {
                         rdbManager.setEnabled(false);
                     }
                 } catch (Exception e) {
-
+                    
                 }
             }
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public class DialogStaffInfo extends javax.swing.JDialog {
         this.parent = parent;
         this.params = params;
     }
-
+    
     private void clearText() {
         rdbUnBlock.setSelected(true);
         rdbOthers.setSelected(true);
@@ -90,7 +90,7 @@ public class DialogStaffInfo extends javax.swing.JDialog {
         txtFullName.setText("");
         txtPhone.setText("");
     }
-
+    
     private boolean update_staff() {
         try {
             if (!staff.getPassword().equals(txtPass.getText())) {
@@ -109,9 +109,9 @@ public class DialogStaffInfo extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return false;
         }
-
+        
     }
-
+    
     private boolean addNewStaff() {
         try {
             staff = new Staff();
@@ -130,7 +130,7 @@ public class DialogStaffInfo extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return false;
         }
-
+        
     }
 
     /**
@@ -405,7 +405,7 @@ public class DialogStaffInfo extends javax.swing.JDialog {
 //                JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
             }
         }
-
+        
 
     }//GEN-LAST:event_btnActionActionPerformed
 

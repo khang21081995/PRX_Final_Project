@@ -86,22 +86,22 @@ public class StaffManagement implements ManageAction {
         return staff;
     }
 
-    public static void main(String[] args) {
-        try {
-            Staff c = new Staff();
-            c.setAddress("Hà Nội");
-            c.setDob("21/08/1995");
-            c.setEmail("KhangPQ.vn@gmail.com");
-            c.setIsManager(false);
-            c.setName("KhangPQ");
-            c.setPassword("Nh0cdaicA");
-            c.setPhoneNumber("0981604050");
-            c.setUsername("Khang21081995");
-            c.setIsBlock(true);
-            new StaffManagement().create(c);
-            System.out.println("OK");
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            Staff c = new Staff();
+//            c.setAddress("Hà Nội");
+//            c.setDob("21/08/1995");
+//            c.setEmail("KhangPQ.vn@gmail.com");
+//            c.setIsManager(false);
+//            c.setName("KhangPQ");
+//            c.setPassword("Nh0cdaicA");
+//            c.setPhoneNumber("0981604050");
+//            c.setUsername("Khang21081995");
+//            c.setIsBlock(true);
+//            new StaffManagement().create(c);
+//            System.out.println("OK");
+//        } catch (Exception ex) {
+//            System.err.println(ex.getMessage());
+//        }
+//    }
 }

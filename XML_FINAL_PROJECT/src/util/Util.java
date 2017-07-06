@@ -5,10 +5,13 @@
  */
 package util;
 
+import Config.CallBack;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
@@ -17,6 +20,8 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
@@ -43,7 +48,9 @@ public class Util {
 
     public static void LookupChange(String folderPath, CallBack callback) {
 
-        File inFolder = new File(modifyToGetCorrectOSPath(folderPath));
+        File inFolder = new File(
+//                modifyToGetCorrectOSPath
+        (folderPath));
         Path path = inFolder.toPath();
         System.out.println("Watching path: " + path);
 
@@ -144,4 +151,9 @@ public class Util {
         return false;
     }
 
+    public static boolean deleteFile(String filePath) throws IOException {
+        Path filePath1;
+        filePath1 = Paths.get(filePath);
+        return Files.deleteIfExists(filePath1);
+    }
 }
