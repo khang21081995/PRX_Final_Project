@@ -22,8 +22,8 @@ public class CallBackImplement implements CallBack {
     @Override
     public void callBackFunction(File xmlFile) {
         //TODO: Khi có file mới thì sẽ cập nhật vào DB
-        if (!xmlFile.getName().toLowerCase().endsWith(".xml") || !xmlHandle.XMLHandler.vefifyXSDvsXML(AppConfig.XSD_FILE_PATH, xmlFile.getPath())) {
-            System.err.println("Lỗi file " + xmlFile.getName());
+        if (!xmlFile.getName().toLowerCase().endsWith(AppConfig.CINEMA_ID.toLowerCase() + ".xml") || !xmlHandle.XMLHandler.vefifyXSDvsXML(AppConfig.XSD_FILE_PATH, xmlFile.getPath())) {
+            System.err.println("Bỏ qua file " + xmlFile.getName());
             return;
         }
         Document doc = xmlHandle.XMLHandler.readFileXml(xmlFile.getPath());

@@ -34,7 +34,7 @@ public class SystemManagement {
                 if (rs.getString("isBlock").equalsIgnoreCase("1")) {
                     throw new Exception("Tài khoản " + username + " đã bị khóa");
                 }
-                AppServices.startAppService();
+//                AppServices.startAppService();
                 if (rs.getString("isManager").equalsIgnoreCase("1")) {
                     return LOGIN_AS_MANAGER;
                 } else {

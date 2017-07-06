@@ -41,7 +41,7 @@ public class CustomerManagement implements ManageAction {
         }
         String values[] = {c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
             c.getAccountType(), c.getGender(), c.getCardID()};
-        String fileCreate = AppConfig.Output_PATH + util.Util.getOsPath() + new Date().getTime() + ".xml";
+        String fileCreate = AppConfig.Output_PATH + util.Util.getOsPath() + new Date().getTime() + AppConfig.CINEMA_ID + ".xml";
         if (xmlHandle.XMLHandler.createXMLFile(fileCreate, "Action", element, values, "Type", "INSERT")) {
             try {
                 return dao.executeSQLwithParams(sqlInsert, DataAccessObject.MODE_UPDATE.SMALL_UPDATE, values);
@@ -66,7 +66,7 @@ public class CustomerManagement implements ManageAction {
 //        return dao.executeSQLwithParams(sqlUpdate, DataAccessObject.MODE_UPDATE.SMALL_UPDATE,
 //                c.getName(), c.getPassport(), c.getDob(), c.getPhoneNumber(), c.getEmail(), c.getScore() + "",
 //                c.getAccountType(), c.getGender(), c.getCardID());
-        String fileCreate = AppConfig.Output_PATH + util.Util.getOsPath() + new Date().getTime() + ".xml";
+        String fileCreate = AppConfig.Output_PATH + util.Util.getOsPath() + new Date().getTime() + AppConfig.CINEMA_ID + ".xml";
         if (xmlHandle.XMLHandler.createXMLFile(fileCreate, "Action", element, values, "Type", "UPDATE")) {
             try {
                 return dao.executeSQLwithParams(sqlUpdate, DataAccessObject.MODE_UPDATE.SMALL_UPDATE, values);

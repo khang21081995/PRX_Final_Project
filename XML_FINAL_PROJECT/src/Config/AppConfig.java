@@ -20,5 +20,6 @@ public class AppConfig {
     public static String CLIENT_PRIVATE_KEY = (xmlHandle.XMLHandler.readFileXml("config.xml").getElementsByTagName("ClientPrivateKey").item(0).getTextContent().trim());
     public static String PUBLIC_KEY_TO_ENCRYPT = (xmlHandle.XMLHandler.readFileXml("config.xml").getElementsByTagName("PublicKeyToEncrypt").item(0).getTextContent().trim());
     public static String XSD_FILE_PATH = (xmlHandle.XMLHandler.readFileXml("config.xml").getElementsByTagName("xsdFilePath").item(0).getTextContent().trim());
+    public static String CINEMA_ID = (xmlHandle.XMLHandler.readFileXml("config.xml").getElementsByTagName("Cid").item(0).getTextContent().trim());
 
 }

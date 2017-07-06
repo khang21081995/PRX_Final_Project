@@ -14,15 +14,15 @@ import java.io.File;
  * @author phamquangkhang
  */
 public class AppServices {
-
+    
     private static File folder = new File(AppConfig.INPUT_PATH);
     private static CallBack cb = new CallBackImplement();
-
+    
     public static boolean startAppService() {
         File[] listOfFiles = folder.listFiles();
-
+        
         for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile() && listOfFiles[i].getName().toLowerCase().endsWith(".xml")) {
+            if (listOfFiles[i].isFile() && listOfFiles[i].getName().toLowerCase().endsWith(".xml") && listOfFiles[i].getName().toLowerCase().startsWith(AppConfig.CINEMA_ID.toLowerCase())) {
                 System.out.println("File " + listOfFiles[i].getName());
                 cb.callBackFunction(listOfFiles[i]);
             }
@@ -32,12 +32,12 @@ public class AppServices {
         }
         return true;
     }
-
+    
     public static boolean wathching() {
         util.Util.LookupChange(folder.getPath(), cb);
         return true;
     }
-
+    
     public static void main(String[] args) {
         startAppService();
     }
